@@ -1,0 +1,77 @@
+<!-- this is important to tell javascript to treat the strings as UTF-8 -->
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+
+<!-- YUI libraries and stylesheets -->
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/fonts/fonts-min.css" />
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/autocomplete/assets/skins/sam/autocomplete.css" />
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/datasource/datasource-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/autocomplete/autocomplete-min.js"></script>
+
+<!-- contains accent_fold() and accent_folded_hilite() -->
+<script type="text/javascript" src="accent-fold.js"></script>
+
+<body class=" yui-skin-sam">
+  <b>To:</b> 
+  <div style="width:25em">
+	<input id="to" type="text" />
+	<div id="ac"></div>
+  </div>
+</body>
+
+<script>
+
+
+// our static address book
+var addressBook = [
+  {name:'Fulanito López', email:'fulanito@example.com'},
+  {name:'Erik Lørgensen', email:'erik@example.com'},
+  {name:'Lorena Smith',   email:'lorena@example.com'},
+  {name:'James Lö',       email:'james@example.com'}
+];
+
+// add an accent-folded "search" field to each entry
+for (var i=0; i<addressBook.length; i++) {
+  addressBook[i]['search'] = accent_fold(addressBook[i]['name']);
+}
+
+var datasource = new YAHOO.util.LocalDataSource(addressBook);
+datasource.responseSchema = {fields : ["email", "name", "search"]};
+var autocomp = new YAHOO.widget.AutoComplete("to", "ac", datasource);
+autocomp.delimChar = [","," "];    // allow multiple entries
+
+// iterate the entire datasource and search for q at the beginning
+// of any words in the accent-folded "search" field
+autocomp.filterResults = function(q, entries, resultObj, cb) {
+    var matches = [];
+    var re = new RegExp('\\b'+accent_fold(q), 'i');
+    for (var i=0; i<entries.length; i++) {
+        if (re.test(entries[i]['search'])) {
+			matches.push(entries[i]);
+        }
+    }
+    resultObj.results = matches;
+	return resultObj;
+};
+
+// create a pretty HTML representation of the match:
+autocomp.formatResult = function (entry, q, match) {
+	var name = accent_folded_hilite(entry[1], q);
+    var email = accent_folded_hilite(entry[0], q);
+	return name + ' &lt;' + email + '&gt;';
+};
+
+</script>
+
+<pre>
+
+
+
+// address book entries:
+Fulanito López
+Erik Lørgensen
+Lorena Smith
+James Lö
+
+try searching for "	lo"
+</pre>
