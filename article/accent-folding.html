@@ -1,22 +1,14 @@
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
-<style>
+<h1>Accent-Folding For Auto-Complete</h1>
 
-</style>
+<p>Another generation of technology has passed and Unicode support is almost everywhere. The next step is to write software that is not just "internationalized" but truly multilingual. In this article we will skip through a bit of history and theory, then illustrate a neat hack called accent-folding. Accent-folding has its limitations but it can help make some important yet overlooked user interactions work better.</p>
 
-<h1>Accent Folding</h1>
+<p>A common assumption about i18n is that every user fits into a single locale like "English, United States" or "French, France". It's a hangover from the PC days when just getting the computer to display the right squiggly bits was a big deal. One byte equaled one character, no exceptions, and you could only load one language's alphabet at a time. This was fine because it was better than nothing, and because users spent most of their time with documents they or their coworkers produced themselves.</p>
 
-<p>Another generation of technology has passed and Unicode is almost everywhere. The next step is to write software that is not just "internationalized" but truly multilingual. In this article we will lay out some history and theory, then walk through a neat hack called accent folding. Accent folding has its limitations but it can help make some important but overlooked user interactions work better.</p>
+<p>Today users deal with data from everywhere, in multiple languages and locales, all the time and all mixed up together. The locale I <i>prefer</i> is only loosely correlated with the locales I <i>expect applications to process</i>.</p>
 
-<p>
-  A common assumption about i18n is that every user fits into a single locale like "English, United States" or "French, France". It's a hangover from the PC days when just getting the computer to display the right squiggly bits was a big deal. One byte equaled one character, no exceptions, and you could only load one language's alphabet at a time. This was fine because it was better than nothing, and because users spent most of their time with documents they or their coworkers produced themselves.
-</p>
-
-<p>
-  Today users deal with data from everywhere, in multiple languages and locales, all the time and all mixed up together. The locale I <i>prefer</i> is only loosely correlated with the locales I <i>expect applications to process</i>.</p>
-
-<p>
-  Consider this address book:
-</p>
+<p>Consider this address book:</p>
 
 <ul>
   <li>
@@ -33,25 +25,21 @@
   </li>
 </ul>
 
-<div style=" FLOAT:right; MARGIN-RIGHT:5px; MARGIN-LEFT:5px">
-  
-<div id="jk:2" style="TEXT-ALIGN:left">
-    <img id="pb2h" src="entourage.png" style="WIDTH:318px; HEIGHT:72px;BORDER:solid 1px #999">
-  </div>
-  
-<div style=" TEXT-ALIGN:center">
-    <i>Fig. 0: Hey Entourage, where are my contacts?</i>
-  </div>
-</div>
 
 <p>
-  If I compose a new message and type "lo" in the To: field, what do you think happens? In many applications only Lorena Smith will show up. They "support Unicode", in the sense that they don't corrupt or barf on it, but that's it.
+  <div style=" FLOAT:right; MARGIN-RIGHT:5px; MARGIN-LEFT:5px">  
+    <img id="pb2h" src="entourage.png" style="WIDTH:270px; HEIGHT:64px; BORDER:solid 1px #999" 
+         title="Screenshot of Microsoft Entourage's address book autosuggest, which does not fold accented characters.">
+    <div style=" TEXT-ALIGN:center">
+      <i>Fig. 0: Hey Entourage, where are my contacts?</i>
+    </div>
+  </div>
+  If I compose a new message and type "lo" in the To: field, what do you think happens? In many applications only Lorena will show up. They "support Unicode", in the sense that they don't corrupt or barf on it, but that's it.
 </p>
 
 <p>
   This problem is not just in address books. Think about inboxes, social bookmarks, comment feeds, users who speak multiple languages, users in internet cafés in foreign countries, even URLs. Look at the journalist Ryszard Kapuściński and how different websites handle his name:
 </p>
-
   
 <ul>
     <li>
@@ -61,10 +49,10 @@
       Wikipedia: <a href="http://en.wikipedia.org/wiki/Ryszard_Kapuscinski">Ryszard Kapuscinski</a> (hand-coded alternate)
     </li>
     <li>
-      Wikipedia: <a href="http://en.wikipedia.org/wiki/Ryszard_Kapusci%C5%84ski">Ryszard Kapusciński</a> (not found)
+      Wikipedia: <a href="http://en.wikipedia.org/wiki/Ryszard_Kapusci%C5%84ski">Ryszard Kapusciński</a> (<b>not found</b>)
     </li>
     <li>
-      Wikipedia: <a href="http://spock.com/%C8%92%C3%BFszar%E1%B8%8B-K%C3%A5pu%C5%9Bci%C5%84s%E1%B8%B3i">Rÿszarḋ Kåpuścińsḳi</a> (not found)
+      Wikipedia: <a href="http://spock.com/%C8%92%C3%BFszar%E1%B8%8B-K%C3%A5pu%C5%9Bci%C5%84s%E1%B8%B3i">Rÿszarḋ Kåpuścińsḳi</a> (<b>not found</b>)
     </li>
     <li>
       Spock: <a href="http://spock.com/%C8%92%C3%BFszar%E1%B8%8B-K%C3%A5pu%C5%9Bci%C5%84s%E1%B8%B3i">Rÿszarḋ Kåpuścińsḳi</a> (accent-folded, redirects to canonical URL)
@@ -74,45 +62,44 @@
   
 <p>There is no excuse for your software to play dumb when the user types "<b>cafe</b>" instead of "<b>café</b>".</p>
 
-<h4>Áçčềñṭ Ḟøłɖǐṅg</h4>
+<h4>Áçčềñṭ-Ḟøłɖǐṅg</h4>
 
 <p>
   <div style=" FLOAT:right; MARGIN-RIGHT:5px; MARGIN-LEFT:5px">
     <div id="jk:4" style="TEXT-ALIGN:left">
-      <img src="accent-folding.png" style="WIDTH:274px; HEIGHT:111px;BORDER:solid 1px #999">
-	</div>
-	<div style=" TEXT-ALIGN:center">
+      <img src="accent-folding.png" style="WIDTH:270px; HEIGHT:110px;BORDER:solid 1px #999"
+           title="Example of a YUI Autosuggest widget with accent-folding added.">
+    </div>
+    <div style=" TEXT-ALIGN:center">
       <i>Fig. 1: accent-folding in an autosuggest widget</i>
-	</div>
+    </div>
   </div>
 
-In specific applications of search that favor recall over precision, like our address book example, <b>á</b>, <b>a</b>, <b>å</b>, and <b>â</b> can be treated as semantically equivalent. Accents (aka diacritical marks) are by and large pronunciation hints that don't affect the textual meaning. Entering them can be cumbersome, especially on mobile devices.</p>
+In specific applications of search that favor recall over precision, like our address book example, <b>á</b>, <b>a</b>, <b>å</b>, and <b>â</b> can be treated as equivalent. Accents (aka diacritical marks) are by and large pronunciation hints that don't affect the textual meaning. Entering them can be cumbersome, especially on mobile devices.</p>
 
-<p>An accent-folding function is essentially a mapping of Unicode characters to their plain-ASCII equivalents. Anywhere you apply case-folding you should consider accent-folding, and for exactly the same reason. Then it doesn't matter whether the user searches for <b>cafe</b>, <b>café</b> or even <b>çåFé</b>, the software should do what they mean.</p>
+<p>An accent-folding function is essentially a mapping of Unicode characters to ASCII equivalents. Anywhere you apply case-folding you should consider accent-folding, and for exactly the same reason. Then it doesn't matter whether the user searches for <b>cafe</b>, <b>café</b> or even <b>çåFé</b>, the software should do what they mean.</p>
  
-<p><b>Be aware</b><b> there are a million caveats to accent rules. You will almost certainly get it wrong</b>. Almost every alphabet has a few extra-special marks that do affect meaning, and of course "non-Western" alphabets have completely different rules.</p>
+<p><b>Be aware there are a million caveats to accent rules. You will almost certainly get it wrong for somebody somewhere</b>. Almost every alphabet has a few extra-special marks that do affect meaning, and of course "non-Western" alphabets have completely different rules.</p>
     
-    
-<p>Another gotcha is the <a href="http://unicode.org/cldr/utility/list-unicodeset.jsp?a=[:Block=Halfwidth_And_Fullwidth_Forms:]" rel="nofollow" style="COLOR:#551a8b">Unicode "fullwidth" Roman alphabet</a>. They are fixed-width versions of plain ASCII characters designed to line up with Chinese/Japanese/Korean characters, eg "１９７９年８月１５日". They reside in <code>0xff00</code> to <code>0xff5e</code> and should be treated as equivalent to their ASCII counterparts.</p>
+<p>A minor gotcha is the <a href="http://unicode.org/cldr/utility/list-unicodeset.jsp?a=[:Block=Halfwidth_And_Fullwidth_Forms:]">Unicode "fullwidth" Roman alphabet</a>. They are fixed-width versions of plain ASCII characters designed to line up with Chinese/Japanese/Korean characters, eg "１９７９年８月１５日". They reside in <code>0xff00</code> to <code>0xff5e</code> and should be treated as equivalent to their ASCII counterparts.</p>
 
 
 <h4>Hey man, I'm only here for the copy/paste</h4>
 
-<p>I've posted a <a href="http://github.com/aristus/accent-folding">more complete library on GitHub</a>, but here's a basic version in Javascript:</p>
-    
+<p>I've posted <a href="http://github.com/aristus/accent-folding">more complete examples</a> on GitHub, but for illustration, here's a basic accent-folder in Javascript:</p>
     
 <blockquote><pre>
 var accentMap = {
-    'á':'a', 'é':'e', 'í':'i','ó':'o','ú':'u'
+  'á':'a', 'é':'e', 'í':'i','ó':'o','ú':'u'
 };
 
 function accent_fold (s) {
-    if (!s) { return ''; }
-    var ret = '';
-    for (var i=0; i&lt;s.length; i++) {
-        ret += accent_map[s.charAt(i)] || s.charAt(i);
-    }
-    return ret;
+  if (!s) { return ''; }
+  var ret = '';
+  for (var i=0; i&lt;s.length; i++) {
+    ret += accent_map[s.charAt(i)] || s.charAt(i);
+  }
+  return ret;
 };
 </pre></blockquote>
 
@@ -128,7 +115,7 @@ function accent_fold (s) {
     
 <blockquote><pre>[LlĹĺĽľĻļḶḷḸḹḼḽḺḻŁłŁłĿŀȽƚɫ][OoÓóÒòŎŏÔôỐốỒồỖöȪȫŐőÕõṌȭȮȯǾǿ...ǬǭŌ]</pre></blockquote>
     
-	<div style="TEXT-ALIGN:center">
+    <div style="TEXT-ALIGN:center">
       <i>Listing 1: ...now you have two problems.</i>
     </div>
     
@@ -136,36 +123,39 @@ function accent_fold (s) {
     
     
 <blockquote><pre>
-// accent_folded_hilite("Fulanilo López", 'lo')
+<b>// accent_folded_hilite("Fulanilo López", 'lo')
 //   --&gt; "Fulani&lt;b&gt;lo&lt;/b&gt; &lt;b&gt;Ló&lt;/b&gt;pez"
-//
+//</b>
 function accent_folded_hilite(str, q) {
-  var str_folded = accent_fold(str).toLowerCase().replace(/[&lt;&gt;]+/g, '');
-  var q_folded = accent_fold(q).toLowerCase().replace(/[&lt;&gt;]+/g, '');
+  var str_folded = accent_fold(str).toLowerCase()
+    .replace(/[&lt;&gt;]+/g, '');
+  var q_folded = accent_fold(q).toLowerCase()
+    .replace(/[&lt;&gt;]+/g, '');
 
-  // create an intermediary string with hilite hints
-  // example: fulani&lt;lo&gt; &lt;lo&gt;pez
+<b>  // Create an intermediate string with hilite hints
+  // Example: fulani&lt;lo&gt; &lt;lo&gt;pez</b>
   var re = new RegExp(q_folded, 'g');
-  var hilite_hints = str_folded.replace(re, '&lt;'+q_folded+'&gt;');
+  var hilite_hints = str_folded.replace(re, 
+        '&lt;'+q_folded+'&gt;');
 
-  // index pointer for the original string
+  <b>// Index pointer for the original string</b>
   var spos = 0;
-  // accumulator for our final string
+  <b>// Accumulator for our final string</b>
   var highlighted = '';
 
-  // walk down the original string and the hilite hint
-  // string in parallel. when you encounter a &lt; or &gt; hint,
+<b>  // Walk down the original string and the hilite hint
+  // string in parallel. When you encounter a &lt; or &gt; hint,
   // append the opening / closing tag in our final string.
-  // if the current char is not a hint, append the corresponding
-  // char from the *original* string to our final string and
-  // advance the original string's pointer.
+  // If the current char is not a hint, append the equiv.
+  // char from the original string to our final string and
+  // advance the original string's pointer.</b>
   for (var i=0; i&lt;hilite_hints.length; i++) {
     var c = str.charAt(spos);
     var h = hilite_hints.charAt(i);
     if (h === '&lt;') {
-       highlighted += '&lt;b&gt;';
+      highlighted += '&lt;b&gt;';
     } else if (h === '&gt;') {
-       highlighted += '&lt;/b&gt;';
+      highlighted += '&lt;/b&gt;';
     } else {
       spos += 1;
       highlighted += c;
@@ -175,26 +165,55 @@ function accent_folded_hilite(str, q) {
 }
 </pre></blockquote>
     
-<p>
-    </p>
-  </div>
-  <br>
   
 <div style="TEXT-ALIGN:center">
-    <i>Listing 2: a basic accent-insensitive string highlighter</i>
-  </div>
-  <br>
+  <i>Listing 2: a basic accent-insensitive string highlighter</i>
+</div>
   
 <p>Listing 2 is probably too simplistic for production code. You can't highlight multiple terms, for example. Some special characters might expand to two characters, like "<b>æ</b>" --&gt; "<b>ae</b>" which will screw up <code>spos</code>. It also strips out angle-brackets (&lt;&gt;) in the original string. But it's good enough for a first pass.</p>
 
 <h4>Accent-folding in YUI Autocomplete</h4>
 
-<p><a href="http://developer.yahoo.com/yui/autocomplete" id="zg:g" title="YUI's Autocomplete library">YUI's Autocomplete library</a> has many hooks and options to play with. Today we'll look at two overrideable methods: <code>filterResults()</code> and <code>formatMatch()</code>. <code>filterResults</code> lets you write your own matching function. formatMatch lets you change the HTML of an entry in the list of suggested matches.</b></p>
-
-  
+<p><a href="http://developer.yahoo.com/yui/autocomplete" id="zg:g" title="YUI's Autocomplete library">YUI's Autocomplete library</a> has many hooks and options to play with. Today we'll look at two overrideable methods: <code>filterResults()</code> and <code>formatMatch()</code>. The <code>filterResults</code> method lets you write your own matching function. The <code>formatMatch</code> method lets you change the HTML of an entry in the list of suggested matches.</b> You can also download a <a href="http://github.com/aristus/accent-folding">complete, working example</a> with all of the source code.</p>
 
 <blockquote><pre>
-// our static address book
+<b>&lt;!-- this is important to tell javascript to treat the strings as UTF-8 --&gt;</b>
+&lt;meta http-equiv="content-type" content="text/html;charset=utf-8" /&gt;
+
+<b>&lt;!-- YUI stylesheets --&gt;</b>
+&lt;link rel="stylesheet" type="text/css" 
+ href="http://yui.yahooapis.com/2.7.0/build/fonts/fonts-min.css" /&gt;
+&lt;link rel="stylesheet" type="text/css" 
+ href="http://yui.yahooapis.com/2.7.0/build/autocomplete/assets/skins/sam/autocomplete.css" /&gt;
+
+<b>&lt;!-- YUI libraries: events, datasource and autocomplete --&gt;</b>
+&lt;script type="text/javascript" 
+ src="http://yui.yahooapis.com/2.7.0/build/yahoo-dom-event/yahoo-dom-event.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" 
+ src="http://yui.yahooapis.com/2.7.0/build/datasource/datasource-min.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" 
+ src="http://yui.yahooapis.com/2.7.0/build/autocomplete/autocomplete-min.js"&gt;&lt;/script&gt;
+
+<b>&lt;!-- contains accent_fold() and accent_folded_hilite() --&gt;</b>
+&lt;script type="text/javascript" src="accent-fold.js"&gt;&lt;/script&gt;
+
+<b>&lt;!-- Give &lt;body&gt; the YUI "skin" --&gt;</b>
+&lt;body class="yui-skin-sam"&gt;
+  &lt;b&gt;To:&lt;/b&gt; 
+  &lt;div style="width:25em"&gt;
+
+    <b>&lt;!-- Our to: field --&gt;</b>
+    &lt;input id="to" type="text" /&gt;
+
+    <b>&lt;!-- An empty &lt;div&gt; to contain the autocomplete --&gt;</b>
+    &lt;div id="ac"&gt;&lt;/div&gt;
+
+  &lt;/div&gt;
+&lt;/body&gt;
+
+&lt;script&gt;
+
+<b>// Our static address book as a list of hash tables</b>
 var addressBook = [
   {name:'Fulanito López', email:'fulanito@example.com'},
   {name:'Erik Lørgensen', email:'erik@example.com'},
@@ -202,19 +221,40 @@ var addressBook = [
   {name:'James Lö',       email:'james@example.com'}
 ];
 
-// add an accent-folded "search" field to each entry
+<b>/* 
+Iterate our address book and add a new field to each 
+row called "search". This contains an accent-folded 
+version of the "name" field.
+*/</b>
 for (var i=0; i&lt;addressBook.length; i++) {
-  addressBook[i]['search'] = accent_fold(addressBook[i]['name']) +
-      ' ' + addressBook[i]['email'];
+  addressBook[i]['search'] = accent_fold(addressBook[i]['name']);
 }
 
+<b>// Create a YUI datasource object from our raw address book</b>
 var datasource = new YAHOO.util.LocalDataSource(addressBook);
-datasource.responseSchema = {fields : ["email", "name", "search"]};
-var autocomp = new YAHOO.widget.AutoComplete("toField", "ac", datasource);
-autocomp.delimChar = [","," "];    // allow multiple entries
 
-// iterate the entire datasource and search for q at the beginning
-// of any words in the accent-folded "search" field
+<b>/*
+A datasource is tabular, but our array of hash tables has no
+concept of column order. So explicitly tell the datasource 
+what order to put the columns in.
+*/</b>
+datasource.responseSchema = {fields : ["email", "name", "search"]};
+
+<b>/*
+Instantiate the autocomplete widget with a reference to the 
+input field, the empty div and the datasource object.
+*/</b>
+var autocomp = new YAHOO.widget.AutoComplete("to", "ac", datasource);
+
+<b>// allow multiple entries by specifying space and comma as delimiters</b>
+autocomp.delimChar = [","," "];
+
+<b>/* 
+Add a new filterResults() method to the autocomplete object:
+Iterate over the datasource and search for q inside the 
+"search" field. This method is called each time the user
+types a new character into the input field.
+*/</b>
 autocomp.filterResults = function(q, entries, resultObj, cb) {
     var matches = [];
     var re = new RegExp('\\b'+accent_fold(q), 'i');
@@ -227,23 +267,31 @@ autocomp.filterResults = function(q, entries, resultObj, cb) {
     return resultObj;
 };
 
-// create a pretty HTML representation of the match:
+<b>/*
+Add a new formatResult() method. It is called on each result
+returned from filterResults(). It outputs a pretty HTML 
+representation of the match. In this method we run the
+accent-folded highlight function over the name and email.
+*/</b>
 autocomp.formatResult = function (entry, q, match) {
     var name = accent_folded_hilite(entry[1], q);
     var email = accent_folded_hilite(entry[0], q);
     return name + ' &lt;' + email + '&gt;';
 };
+
+<b>//fin</b>
+&lt;/script&gt;
 </pre></blockquote>
   
 <div style="TEXT-ALIGN:center">
-  <i>Listing 3: accent-folded autocomplete in YUI</i>
+  <i>Listing 3: accent-folded autocomplete in YUI.</i>
 </div>
 
 
 <h4>About those million caveats...</h4>
 
 
-<p>This accent-folding trick works mostly for "Western European" text and not really all of it, eg, in German <b>Ü</b> probably should map to <b>Ue</b>. Accent folding exploits specific quirks of the the language family and the limited problem domains of our examples, where it's better to get more results than no results. A French person searching the web for <b>thé</b> (tea) would be upset to be flooded with irrelevant English text.</p>
+<p>This accent-folding trick works mostly for "Western European" text and not really all of it. It exploits specific quirks of the the language family and the limited problem domains of our examples, where it's better to get more results than no results. In German <b>Ü</b> probably should map to <b>Ue</b> instead of just <b>U</b>. A French person searching the web for <b>thé</b> (tea) would be upset to be flooded with irrelevant English text.</p>
 
 <p>There's only so far you can push a simple character map. It would be very tricky to reconcile the Roman "<b>Marc Chagall</b>" with the Cyrillic "<b>Марк Шагал</b>" or Yiddish "<b>מאַרק שאַגאַל</b>". There are very interesting similarities in the characters but a magical context-free two-way mapping is probably not possible.</p>
 
@@ -262,8 +310,8 @@ autocomp.formatResult = function (entry, q, match) {
 
 <p>There is a lot of prior work on this problem and two ready paths you can choose: the right way and the maybe-good-enough way. Neither have the simplicity of our naïve hash table, but they will be less disappointing for your users in general applications.</p>
 
-<p>The first is <a id="q2_j" href="http://icu-project.org" title="International Components for Unicode">International Components for Unicode</a> (ICU), a project that originated in the early nineties in the European Union. It aims to be a complete, language-aware transliteration, Unicode, formatting, everything library. It's big, it's C++/Java, and requires contextual knowledge of the inputs and outputs in order to work. </p>
+<p>The first is <a href="http://icu-project.org" title="International Components for Unicode">International Components for Unicode</a> (ICU), a project that originated in the early nineties in the European Union. It aims to be a complete, language-aware transliteration, Unicode, formatting, everything library. It's big, it's C++/Java, and requires contextual knowledge of the inputs and outputs in order to work. </p>
 
-<p>The second is <a id="oieg" href="http://search.cpan.org/perldoc/Text::Unidecode" title="Unidecode">Unidecode</a>, a context-free transliteration library available for Perl and <a id="b2g5" href="http://pypi.python.org/pypi/Unidecode" title="Python">Python</a>. It tries to transliterate all Unicode characters to a basic Latin alphabet. It makes little attempt to be reversible, language-specific, or even generally correct; it's a quick-and-dirty hack that nonetheless is pretty comprehensive.</p>
+<p>The second is <a href="http://search.cpan.org/perldoc/Text::Unidecode" title="Unidecode">Unidecode</a>, a context-free transliteration library available for Perl and <a href="http://pypi.python.org/pypi/Unidecode" title="Python">Python</a>. It tries to transliterate all Unicode characters to a basic Latin alphabet. It makes little attempt to be reversible, language-specific, or even generally correct; it's a quick-and-dirty hack that nonetheless is pretty comprehensive.</p>
 
 <p>Accent-folding in the right places saves your users time and makes your software smarter. The strict segregation of languages and locales is partially an artifact of technology limitations which no longer hold. It's up to you how far you want to take things, but even a little bit of effort goes a long way. Good luck!</p>
