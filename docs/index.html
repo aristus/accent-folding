@@ -158,9 +158,9 @@
 
 <span class="kw">const</span> af = <span class="kw">new</span> AccentFolding();
 
-<span class="kw">const</span> replaced:     <span class="typ">string</span> = af.replace(<span class="str">'café'</span>);
-<span class="kw">const</span> highlighted:  <span class="typ">string</span> = af.highlightMatch(<span class="str">'López'</span>, <span class="str">'lo'</span>);
-<span class="kw">const</span> withTag:      <span class="typ">string</span> = af.highlightMatch(<span class="str">'López'</span>, <span class="str">'lo'</span>, <span class="str">'mark'</span>);
+<span class="kw">const</span> replaced:     <span class="typ">string</span> = af.replace(<span class="str">'café'</span>);              <span class="cmt">// → "cafe"</span>
+<span class="kw">const</span> highlighted:  <span class="typ">string</span> = af.highlightMatch(<span class="str">'López'</span>, <span class="str">'lo'</span>);        <span class="cmt">// → "&lt;b&gt;Ló&lt;/b&gt;pez"</span>
+<span class="kw">const</span> withTag:      <span class="typ">string</span> = af.highlightMatch(<span class="str">'López'</span>, <span class="str">'lo'</span>, <span class="str">'mark'</span>);  <span class="cmt">// → "&lt;mark&gt;Ló&lt;/mark&gt;pez"</span>
 
 <span class="cmt">// Custom accent map with a typed argument</span>
 <span class="kw">const</span> myMap: <span class="typ">AccentMap</span> = { ö: <span class="str">'oe'</span>, ü: <span class="str">'ue'</span>, ñ: <span class="str">'n'</span> };
