@@ -73,7 +73,7 @@ Use the third argument to specify the wrapping HTML tag:
 
 ```js
 af.highlightMatch('Fulanilo López', 'lo', 'strong'); // --> "Fulani<strong>lo</strong> <strong>Ló</strong>pez"
-af.highlightMatch('Fulanilo López', 'lo', 'mark');   // --> "Fulani<mark>lo</mark> <mark>Ló</mark>pez"
+af.highlightMatch('Fulanilo López', 'lo', 'mark'); // --> "Fulani<mark>lo</mark> <mark>Ló</mark>pez"
 ```
 
 ### `replace`
@@ -120,19 +120,19 @@ const af = new AccentFolding();
 const names = ['López', 'Müller', 'Björk', 'Ñoño', 'García', 'Renée'];
 
 const input = document.querySelector('#search');
-const list  = document.querySelector('#results');
+const list = document.querySelector('#results');
 
 input.addEventListener('input', () => {
-  const query = input.value.trim();
-  const matches = query
-    ? names.filter(name =>
-        af.replace(name).toLowerCase().includes(af.replace(query).toLowerCase())
-      )
-    : names;
+	const query = input.value.trim();
+	const matches = query
+		? names.filter((name) =>
+				af.replace(name).toLowerCase().includes(af.replace(query).toLowerCase())
+			)
+		: names;
 
-  list.innerHTML = matches
-    .map(name => `<li>${query ? af.highlightMatch(name, query) : name}</li>`)
-    .join('');
+	list.innerHTML = matches
+		.map((name) => `<li>${query ? af.highlightMatch(name, query) : name}</li>`)
+		.join('');
 });
 ```
 
@@ -146,24 +146,33 @@ const af = new AccentFolding();
 const names = ['López', 'Müller', 'Björk', 'Ñoño', 'García', 'Renée'];
 
 export default function AccentSearch() {
-  const [query, setQuery] = useState('');
+	const [query, setQuery] = useState('');
 
-  const matches = query
-    ? names.filter(name =>
-        af.replace(name).toLowerCase().includes(af.replace(query).toLowerCase())
-      )
-    : names;
+	const matches = query
+		? names.filter((name) =>
+				af.replace(name).toLowerCase().includes(af.replace(query).toLowerCase())
+			)
+		: names;
 
-  return (
-    <div>
-      <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search..." />
-      <ul>
-        {matches.map(name => (
-          <li key={name} dangerouslySetInnerHTML={{ __html: query ? af.highlightMatch(name, query) : name }} />
-        ))}
-      </ul>
-    </div>
-  );
+	return (
+		<div>
+			<input
+				value={query}
+				onChange={(e) => setQuery(e.target.value)}
+				placeholder="Search..."
+			/>
+			<ul>
+				{matches.map((name) => (
+					<li
+						key={name}
+						dangerouslySetInnerHTML={{
+							__html: query ? af.highlightMatch(name, query) : name,
+						}}
+					/>
+				))}
+			</ul>
+		</div>
+	);
 }
 ```
 
@@ -196,3 +205,7 @@ accentFoldedHighlight('Fulanilo López', 'lo', 'strong'); // --> "Fulani<strong>
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Credits
+
+The initial idea came from the article [Accent Folding for Auto-Complete](https://alistapart.com/article/accent-folding-for-auto-complete/) by John Nunemaker on A List Apart. This library has since grown beyond that original concept, but the credit belongs there.
