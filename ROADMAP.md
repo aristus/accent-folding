@@ -13,5 +13,5 @@
 
 ## Future Plans
 
-- [ ] Add TypeScript support
+- [x] Add TypeScript support
 - [ ] Add support for CommonJS

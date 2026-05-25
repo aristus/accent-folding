@@ -20,7 +20,8 @@
     "lint:fix": "eslint . --fix",
     "semantic-release": "semantic-release",
     "test": "vitest",
-    "type-check": "tsc"
+    "type-check": "tsc",
+    "docs": "pnpm dlx serve docs"
   },
   "repository": {
     "type": "git",

@@ -13,22 +13,38 @@
       padding: 2rem 1rem;
       color: #1a1a1a;
     }
-    h1 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    h1 img { display: block; }
     h1 a { color: inherit; text-decoration: none; opacity: 0.45; font-size: 0.9rem; }
     h1 a:hover { opacity: 1; }
     .subtitle { color: #6b7280; margin-bottom: 2.5rem; }
-    h2 { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; }
+    h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    h2 img { display: block; }
     .badge {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
       font-size: 0.7rem;
       font-weight: 500;
       padding: 0.15rem 0.5rem;
       border-radius: 100px;
-      vertical-align: middle;
-      margin-left: 0.4rem;
+      margin-left: 0.15rem;
     }
     .badge-js    { background: #fef3c7; color: #92400e; }
     .badge-react { background: #dbeafe; color: #1d4ed8; }
+    .badge-ts    { background: #eff6ff; color: #1d4ed8; }
     .demo {
       border: 1px solid #e5e7eb;
       border-radius: 10px;
@@ -73,11 +89,34 @@
     td mark { background: #fef9c3; padding: 0; }
     td span { background: #fef9c3; }
     .empty { color: #9ca3af; font-style: italic; }
+    /* TypeScript code block */
+    .ts-note { font-size: 0.875rem; color: #6b7280; margin-bottom: 1rem; }
+    .ts-note code { font-family: ui-monospace, monospace; background: #f3f4f6; padding: 0.1rem 0.35rem; border-radius: 3px; }
+    pre {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      font-family: ui-monospace, monospace;
+      font-size: 0.825rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+    /* minimal keyword colouring */
+    .kw  { color: #0550ae; }   /* import / from / const / type */
+    .str { color: #0a3069; }   /* strings */
+    .typ { color: #116329; }   /* types */
+    .cmt { color: #6b7280; font-style: italic; }
   </style>
 </head>
 <body>
 
-<h1>accent-folding <a href="https://github.com/ZRktty/accent-folding" target="_blank" rel="noopener">↗</a></h1>
+<h1>
+  <img src="https://cdn.simpleicons.org/npm/CB3837" width="32" height="32" alt="npm">
+  accent-folding
+  <a href="https://github.com/ZRktty/accent-folding" target="_blank" rel="noopener">↗</a>
+</h1>
 <p class="subtitle">Accent-insensitive matching with built-in search highlighting — try typing <strong>lo</strong>, <strong>mu</strong>, <strong>gar</strong>, or <strong>bj</strong></p>
 
 <div class="demo">
@@ -105,8 +144,30 @@
 </div>
 
 <div class="demo">
-  <h2>React <span class="badge badge-react">component</span></h2>
+  <h2>
+    <img src="https://cdn.simpleicons.org/react/61DAFB" width="20" height="20" alt="React">
+    React <span class="badge badge-react">component</span>
+  </h2>
   <div id="react-root"></div>
+</div>
+
+<div class="demo">
+  <h2>TypeScript <span class="badge badge-ts">types included</span></h2>
+  <p class="ts-note">Full type declarations ship with the package — no <code>@types/</code> needed.</p>
+  <pre><code><span class="kw">import</span> AccentFolding, { <span class="kw">type</span> AccentMap } <span class="kw">from</span> <span class="str">'accent-folding'</span>;
+
+<span class="kw">const</span> af = <span class="kw">new</span> AccentFolding();
+
+<span class="kw">const</span> replaced:     <span class="typ">string</span> = af.replace(<span class="str">'café'</span>);
+<span class="kw">const</span> highlighted:  <span class="typ">string</span> = af.highlightMatch(<span class="str">'López'</span>, <span class="str">'lo'</span>);
+<span class="kw">const</span> withTag:      <span class="typ">string</span> = af.highlightMatch(<span class="str">'López'</span>, <span class="str">'lo'</span>, <span class="str">'mark'</span>);
+
+<span class="cmt">// Custom accent map with a typed argument</span>
+<span class="kw">const</span> myMap: <span class="typ">AccentMap</span> = { ö: <span class="str">'oe'</span>, ü: <span class="str">'ue'</span>, ñ: <span class="str">'n'</span> };
+<span class="kw">const</span> afCustom        = <span class="kw">new</span> AccentFolding(myMap);
+
+<span class="cmt">// Static utility</span>
+<span class="kw">const</span> entries: <span class="typ">Array</span>&lt;[<span class="typ">string</span>, <span class="typ">string</span>]&gt; = AccentFolding.convertAccentMapToArray(myMap);</code></pre>
 </div>
 
 <script type="module">

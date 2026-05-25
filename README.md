@@ -32,6 +32,24 @@ or with yarn:
 yarn add accent-folding
 ```
 
+## TypeScript
+
+Full type declarations are included. No `@types/` package needed.
+
+```ts
+import AccentFolding, { type AccentMap } from 'accent-folding';
+
+const af = new AccentFolding();
+
+const replaced: string = af.replace('café');
+const highlighted: string = af.highlightMatch('López', 'lo');
+const highlightedMark: string = af.highlightMatch('López', 'lo', 'mark');
+
+// Custom accent map with typed argument
+const customMap: AccentMap = { ö: 'oe', ü: 'ue' };
+const afCustom = new AccentFolding(customMap);
+```
+
 ## Public Methods
 
 ### `highlightMatch`
